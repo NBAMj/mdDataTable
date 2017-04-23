@@ -66,7 +66,9 @@
 
         function saveRow(){
             if($scope.editFieldForm.$valid){
-                $mdDialog.hide(cellData.value);
+                console.log(cellData);
+                //Mujib changed from cellData.value to cellData
+                $mdDialog.hide(cellData);
             }
         }
 
@@ -255,7 +257,7 @@
             },
             controller: ['$scope', function mdtTable($scope){
                 var vm = this;
-
+                console.log($scope.mdtRow);
                 $scope.rippleEffectCallback = function(){
                     return $scope.rippleEffect ? $scope.rippleEffect : false;
                 };
@@ -493,7 +495,6 @@
 
         mdtAjaxPaginationHelper.prototype.fetchPage = function(page){
             this.isLoading = true;
-
             var that = this;
 
             var callbackArguments = {page: page, pageSize: this.rowsPerPage, options: {}};
@@ -516,6 +517,7 @@
 
                     that.isLoadError = false;
                     that.isLoading = false;
+                    console.log('finished loading');
 
                 }, function(){
                     that.dataStorage.storage = [];
@@ -777,7 +779,7 @@
                     if(rowData.rowId){
                         deletedRows.push(rowData.rowId);
 
-                    //Fallback when no id was specified
+                        //Fallback when no id was specified
                     } else{
                         deletedRows.push(rowData.data);
                     }
@@ -798,7 +800,7 @@
                     if(rowData.rowId){
                         selectedRows.push(rowData.rowId);
 
-                    //Fallback when no id was specified
+                        //Fallback when no id was specified
                     } else{
                         selectedRows.push(rowData.data);
                     }
@@ -1044,7 +1046,8 @@
                         mdtRowCtrl.addToRowDataStorage(clone, attributes);
                     }else{
                         //TODO: better idea?
-                        var cellValue = $interpolate(clone.html())($scope.$parent);
+                        console.log(clone);
+                        var cellValue = $interpolate(clone.context.data)($scope.$parent);
 
                         mdtRowCtrl.addToRowDataStorage(cellValue, attributes);
                     }
@@ -1255,7 +1258,7 @@
     }
 
     angular
-    .module('mdDataTable')
+        .module('mdDataTable')
         .directive('mdtGeneratedHeaderCellContent', mdtGeneratedHeaderCellContentDirective);
 }());
 
@@ -1658,7 +1661,7 @@
         };
 
         /**
-         * Set the position of the column filter panel. It's required to attach it to the outer container 
+         * Set the position of the column filter panel. It's required to attach it to the outer container
          * of the component because otherwise some parts of the panel can became partially or fully hidden
          * (e.g.: when table has only one row to show)
          */
@@ -1669,13 +1672,13 @@
                 top: elementPosition.top + 60,
                 left: elementPosition.left
             };
-            
+
             element.css('position', 'absolute');
             element.detach().appendTo('body');
 
             element.css({
-                top: targetMetrics.top + 'px', 
-                left: targetMetrics.left + 'px', 
+                top: targetMetrics.top + 'px',
+                left: targetMetrics.left + 'px',
                 position:'absolute'
             });
         }
@@ -1857,7 +1860,7 @@
             // if ajax paginator is the current paginator
             if(paginator.getFirstPage){
                 paginator.getFirstPage();
-            // or it's just a simple data paginator
+                // or it's just a simple data paginator
             }else{
                 //todo: making it nicer
                 //adding the column index information to the header cell data
@@ -1981,15 +1984,19 @@
             $scope.saveRow = function(rowData){
                 var rawRowData = ctrl.dataStorage.getSavedRowData(rowData);
 
-                $scope.saveRowCallback({row: rawRowData});
+                //Mujib: changed to return the whole row with rowId
+                $scope.saveRowCallback({row: rowData});
             };
 
             $scope.showEditDialog = function(ev, cellData, rowData){
                 var rect = ev.currentTarget.closest('td').getBoundingClientRect();
                 var position = {
-                    top: rect.top,
-                    left: rect.left
+                    left: rect.center
                 };
+                //TODO: Do a pull request: Changed by Mujib
+
+
+                var temp = {};
 
                 var ops = {
                     controller: 'InlineEditModalCtrl',
@@ -1999,22 +2006,39 @@
                     focusOnOpen: false,
                     locals: {
                         position: position,
-                        cellData: JSON.parse(JSON.stringify(cellData)),
+                        cellData: temp,
                         mdtTranslations: $scope.mdtTranslations
                     }
                 };
 
-                if(cellData.attributes.editableField === 'smallEditDialog'){
-                    ops.templateUrl = '/main/templates/smallEditDialog.html';
-                }else{
-                    ops.templateUrl = '/main/templates/largeEditDialog.html';
+                //  console.log(rowData);
+
+                for(var i =0; i< rowData.data.length; i++){
+                    if(rowData.data[i].columnKey == 'NoticeDate'){
+                        var temp = rowData;
+                        if(typeof temp.data[2].value == 'string') {
+                            temp.value = new Date(temp.data[2].value.replace(/['"]+/g, ''));
+                        }
+                        ops.templateUrl = '/main/templates/noticeEditDialog.html';
+                        ops.locals.cellData = temp;
+                        break;
+                    }else if(rowData.data[i].columnKey == 'meejo'){
+                        // temp.data[2].value = new Date(temp.data[2].value.replace(/['"]+/g, ''));
+                        ops.templateUrl = '/main/templates/newsEditDialog.html';
+                    }
                 }
+
+                // if(cellData.attributes.editableField === 'smallEditDialog'){
+                //     ops.templateUrl = '/main/templates/smallEditDialog.html';
+                // }else{
+                //     ops.templateUrl = '/main/templates/largeEditDialog.html';
+                // }
 
                 var that = this;
                 $mdDialog.show(ops).then(function(cellValue){
-                    cellData.value = cellValue;
-
-                    that.saveRow(rowData);
+                    //     console.log(cellValue);
+                    // cellData.value = cellValue;
+                    that.saveRow(cellValue);
                 });
             };
         }
