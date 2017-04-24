@@ -1,4 +1,4 @@
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -43,13 +43,13 @@
      */
     angular.module('mdDataTable', ['mdtTemplates', 'ngMaterial', 'ngMdIcons', 'ngSanitize']);
 }());
-(function(){
+(function () {
     'use strict';
 
     InlineEditModalCtrl.$inject = ['$scope', 'position', 'cellData', 'mdtTranslations', '$timeout', '$mdDialog'];
-    function InlineEditModalCtrl($scope, position, cellData, mdtTranslations, $timeout, $mdDialog){
+    function InlineEditModalCtrl($scope, position, cellData, mdtTranslations, $timeout, $mdDialog) {
 
-        $timeout(function() {
+        $timeout(function () {
             var el = $('md-dialog');
             el.css('position', 'fixed');
             el.css('top', position['top']);
@@ -64,15 +64,15 @@
         $scope.saveRow = saveRow;
         $scope.cancel = cancel;
 
-        function saveRow(){
-            if($scope.editFieldForm.$valid){
+        function saveRow() {
+            if ($scope.editFieldForm.$valid) {
                 console.log(cellData);
                 //Mujib changed from cellData.value to cellData
                 $mdDialog.hide(cellData);
             }
         }
 
-        function cancel(){
+        function cancel() {
             $mdDialog.cancel();
         }
     }
@@ -81,11 +81,11 @@
         .module('mdDataTable')
         .controller('InlineEditModalCtrl', InlineEditModalCtrl);
 }());
-(function(){
+(function () {
     'use strict';
 
     mdtAlternateHeadersDirective.$inject = ['_'];
-    function mdtAlternateHeadersDirective(_){
+    function mdtAlternateHeadersDirective(_) {
         return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtAlternateHeaders.html',
@@ -93,11 +93,11 @@
             replace: true,
             scope: true,
             require: '^mdtTable',
-            link: function($scope, element, attrs, ctrl){
+            link: function ($scope, element, attrs, ctrl) {
                 $scope.deleteSelectedRows = deleteSelectedRows;
                 $scope.getNumberOfSelectedRows = _.bind(ctrl.dataStorage.getNumberOfSelectedRows, ctrl.dataStorage);
 
-                function deleteSelectedRows(){
+                function deleteSelectedRows() {
                     var deletedRows = ctrl.dataStorage.deleteSelectedRows();
 
                     $scope.deleteRowCallback({rows: deletedRows});
@@ -110,7 +110,7 @@
         .module('mdDataTable')
         .directive('mdtAlternateHeaders', mdtAlternateHeadersDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -231,7 +231,7 @@
                                SelectableRowsFeature,
                                PaginationFeature,
                                ColumnSelectorFeature,
-                               _){
+                               _) {
         return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtTable.html',
@@ -248,17 +248,17 @@
                 paginatedRows: '=',
                 mdtRow: '=',
                 mdtRowPaginator: '&?',
-                mdtRowPaginatorErrorMessage:'@',
-                mdtRowPaginatorNoResultsMessage:'@',
+                mdtRowPaginatorErrorMessage: '@',
+                mdtRowPaginatorNoResultsMessage: '@',
                 virtualRepeat: '=',
                 mdtTriggerRequest: '&?',
                 mdtTranslations: '=?',
                 mdtLoadingIndicator: '=?'
             },
-            controller: ['$scope', function mdtTable($scope){
+            controller: ['$scope', function mdtTable($scope) {
                 var vm = this;
                 console.log($scope.mdtRow);
-                $scope.rippleEffectCallback = function(){
+                $scope.rippleEffectCallback = function () {
                     return $scope.rippleEffect ? $scope.rippleEffect : false;
                 };
 
@@ -271,12 +271,12 @@
                 _processData();
 
                 // initialization of the storage service
-                function _initTableStorage(){
+                function _initTableStorage() {
                     vm.dataStorage = TableDataStorageFactory.getInstance();
                 }
 
                 // set translations or fallback to a default value
-                function _setDefaultTranslations(){
+                function _setDefaultTranslations() {
                     $scope.mdtTranslations = $scope.mdtTranslations || {};
 
                     $scope.mdtTranslations.rowsPerPage = $scope.mdtTranslations.rowsPerPage || 'Rows per page:';
@@ -287,8 +287,8 @@
                 }
 
                 // fill storage with values if set
-                function _processData(){
-                    if(_.isEmpty($scope.mdtRow)) {
+                function _processData() {
+                    if (_.isEmpty($scope.mdtRow)) {
                         return;
                     }
 
@@ -299,19 +299,19 @@
 
                             _addRawDataToStorage(mdtRow['data']);
                         }, true);
-                    }else{
+                    } else {
                         //if it's used for 'Ajax pagination'
                     }
                 }
 
-                function _addRawDataToStorage(data){
+                function _addRawDataToStorage(data) {
                     var rowId;
                     var columnValues = [];
-                    _.each(data, function(row){
+                    _.each(data, function (row) {
                         rowId = _.get(row, $scope.mdtRow['table-row-id-key']);
                         columnValues = [];
 
-                        _.each($scope.mdtRow['column-keys'], function(columnKey){
+                        _.each($scope.mdtRow['column-keys'], function (columnKey) {
                             columnValues.push({
                                 attributes: {
                                     editableField: false
@@ -326,7 +326,7 @@
                     });
                 }
             }],
-            link: function($scope, element, attrs, ctrl, transclude){
+            link: function ($scope, element, attrs, ctrl, transclude) {
                 $scope.dataStorage = ctrl.dataStorage;
 
                 _injectContentIntoTemplate();
@@ -337,7 +337,7 @@
                 PaginationFeature.startFeature(ctrl);
                 ColumnSelectorFeature.initFeatureHeaderValues($scope.dataStorage.header, ctrl.columnSelectorFeature);
 
-                function _injectContentIntoTemplate(){
+                function _injectContentIntoTemplate() {
                     transclude(function (clone) {
                         var headings = [];
                         var body = [];
@@ -346,11 +346,11 @@
                         // Use plain JS to append content
                         _.each(clone, function (child) {
 
-                            if ( child.classList !== undefined ) {
-                                if ( child.classList.contains('theadTrRow')) {
+                            if (child.classList !== undefined) {
+                                if (child.classList.contains('theadTrRow')) {
                                     headings.push(child);
                                 }
-                                else if( child.classList.contains('customCell') ) {
+                                else if (child.classList.contains('customCell')) {
                                     customCell.push(child);
                                 }
                                 else {
@@ -364,16 +364,16 @@
                         var reader = element[0].querySelector('.mdtTable-reader');
 
                         _.each(headings, function (heading) {
-                            reader.appendChild( heading );
+                            reader.appendChild(heading);
                         });
 
                         _.each(body, function (item) {
-                            reader.appendChild( item );
+                            reader.appendChild(item);
                         });
                     });
                 }
 
-                function _initEditCellFeature(){
+                function _initEditCellFeature() {
                     //TODO: make it possible to only register feature if there is at least
                     // one column which requires it.
                     // for that we need to change the place where we register edit-row.
@@ -381,7 +381,7 @@
                     EditCellFeature.addRequiredFunctions($scope, ctrl);
                 }
 
-                function _initSelectableRowsFeature(){
+                function _initSelectableRowsFeature() {
                     SelectableRowsFeature.getInstance({
                         $scope: $scope,
                         ctrl: ctrl
@@ -396,13 +396,13 @@
         .directive('mdtTable', mdtTableDirective);
 }());
 
-(function(){
+(function () {
     'use strict';
 
     mdtAjaxPaginationHelperFactory.$inject = ['ColumnFilterFeature', 'ColumnSortFeature', 'PaginatorTypeProvider', '_'];
-    function mdtAjaxPaginationHelperFactory(ColumnFilterFeature, ColumnSortFeature, PaginatorTypeProvider, _){
+    function mdtAjaxPaginationHelperFactory(ColumnFilterFeature, ColumnSortFeature, PaginatorTypeProvider, _) {
 
-        function mdtAjaxPaginationHelper(params){
+        function mdtAjaxPaginationHelper(params) {
             this.paginatorType = PaginatorTypeProvider.AJAX;
 
             this.dataStorage = params.dataStorage;
@@ -412,13 +412,13 @@
             this.mdtRowPaginatorNoResultsMessage = params.mdtRowPaginatorNoResultsMessage || 'No results.';
             this.mdtTriggerRequest = params.mdtTriggerRequest;
 
-            if(params.paginationSetting &&
+            if (params.paginationSetting &&
                 params.paginationSetting.hasOwnProperty('rowsPerPageValues') &&
-                params.paginationSetting.rowsPerPageValues.length > 0){
+                params.paginationSetting.rowsPerPageValues.length > 0) {
 
                 this.rowsPerPageValues = params.paginationSetting.rowsPerPageValues;
-            }else{
-                this.rowsPerPageValues = [10,20,30,50,100];
+            } else {
+                this.rowsPerPageValues = [10, 20, 30, 50, 100];
             }
 
             this.rowsPerPage = this.rowsPerPageValues[0];
@@ -432,68 +432,68 @@
             //this.fetchPage(this.page);
 
             //triggering ajax call manually
-            if(this.mdtTriggerRequest) {
+            if (this.mdtTriggerRequest) {
                 params.mdtTriggerRequest({
                     loadPageCallback: this.fetchPage.bind(this)
                 });
             }
         }
 
-        mdtAjaxPaginationHelper.prototype.getStartRowIndex = function(){
-            return (this.page-1) * this.rowsPerPage;
+        mdtAjaxPaginationHelper.prototype.getStartRowIndex = function () {
+            return (this.page - 1) * this.rowsPerPage;
         };
 
-        mdtAjaxPaginationHelper.prototype.getEndRowIndex = function(){
+        mdtAjaxPaginationHelper.prototype.getEndRowIndex = function () {
             var lastItem = this.getStartRowIndex() + this.rowsPerPage - 1;
 
-            if(this.totalResultCount < lastItem){
+            if (this.totalResultCount < lastItem) {
                 return this.totalResultCount - 1;
             }
 
             return lastItem;
         };
 
-        mdtAjaxPaginationHelper.prototype.getTotalRowsCount = function(){
+        mdtAjaxPaginationHelper.prototype.getTotalRowsCount = function () {
             return this.totalResultCount;
         };
 
-        mdtAjaxPaginationHelper.prototype.getRows = function(){
+        mdtAjaxPaginationHelper.prototype.getRows = function () {
             return this.dataStorage.storage;
         };
 
-        mdtAjaxPaginationHelper.prototype.previousPage = function(){
+        mdtAjaxPaginationHelper.prototype.previousPage = function () {
             var that = this;
-            if(this.hasPreviousPage()){
-                this.fetchPage(this.page-1).then(function(){
+            if (this.hasPreviousPage()) {
+                this.fetchPage(this.page - 1).then(function () {
                     that.page--;
                 });
             }
         };
 
-        mdtAjaxPaginationHelper.prototype.nextPage = function(){
+        mdtAjaxPaginationHelper.prototype.nextPage = function () {
             var that = this;
-            if(this.hasNextPage()){
-                this.fetchPage(this.page+1).then(function(){
+            if (this.hasNextPage()) {
+                this.fetchPage(this.page + 1).then(function () {
                     that.page++;
                 });
             }
         };
 
-        mdtAjaxPaginationHelper.prototype.getFirstPage = function(){
+        mdtAjaxPaginationHelper.prototype.getFirstPage = function () {
             this.page = 1;
 
             this.fetchPage(this.page);
         };
 
-        mdtAjaxPaginationHelper.prototype.hasNextPage = function(){
+        mdtAjaxPaginationHelper.prototype.hasNextPage = function () {
             return this.page < this.totalPages;
         };
 
-        mdtAjaxPaginationHelper.prototype.hasPreviousPage = function(){
+        mdtAjaxPaginationHelper.prototype.hasPreviousPage = function () {
             return this.page > 1;
         };
 
-        mdtAjaxPaginationHelper.prototype.fetchPage = function(page){
+        mdtAjaxPaginationHelper.prototype.fetchPage = function (page) {
             this.isLoading = true;
             var that = this;
 
@@ -503,15 +503,15 @@
             ColumnSortFeature.appendSortedColumnToCallbackArgument(this.dataStorage, callbackArguments);
 
             return this.paginatorFunction(callbackArguments)
-                .then(function(data){
+                .then(function (data) {
                     that.dataStorage.storage = [];
                     that.setRawDataToStorage(that, data.results, that.rowOptions['table-row-id-key'], that.rowOptions['column-keys'], that.rowOptions);
                     that.totalResultCount = data.totalResultCount;
                     that.totalPages = Math.ceil(data.totalResultCount / that.rowsPerPage);
 
-                    if(that.totalResultCount == 0){
+                    if (that.totalResultCount == 0) {
                         that.isNoResults = true;
-                    }else{
+                    } else {
                         that.isNoResults = false;
                     }
 
@@ -519,7 +519,7 @@
                     that.isLoading = false;
                     console.log('finished loading');
 
-                }, function(){
+                }, function () {
                     that.dataStorage.storage = [];
 
                     that.isLoadError = true;
@@ -528,14 +528,14 @@
                 });
         };
 
-        mdtAjaxPaginationHelper.prototype.setRawDataToStorage = function(that, data, tableRowIdKey, columnKeys, rowOptions){
+        mdtAjaxPaginationHelper.prototype.setRawDataToStorage = function (that, data, tableRowIdKey, columnKeys, rowOptions) {
             var rowId;
             var columnValues = [];
-            _.each(data, function(row){
+            _.each(data, function (row) {
                 rowId = _.get(row, tableRowIdKey);
                 columnValues = [];
 
-                _.each(columnKeys, function(columnKey){
+                _.each(columnKeys, function (columnKey) {
                     //TODO: centralize adding column values into one place.
                     // Duplication occurs at mdtCellDirective's link function.
                     // Duplication in mdtTableDirective `_addRawDataToStorage` method!
@@ -555,14 +555,14 @@
             });
         };
 
-        mdtAjaxPaginationHelper.prototype.setRowsPerPage = function(rowsPerPage){
+        mdtAjaxPaginationHelper.prototype.setRowsPerPage = function (rowsPerPage) {
             this.rowsPerPage = rowsPerPage;
 
             this.getFirstPage();
         };
 
         return {
-            getInstance: function(dataStorage, isEnabled, paginatorFunction, rowOptions){
+            getInstance: function (dataStorage, isEnabled, paginatorFunction, rowOptions) {
                 return new mdtAjaxPaginationHelper(dataStorage, isEnabled, paginatorFunction, rowOptions);
             }
         };
@@ -573,12 +573,12 @@
         .service('mdtAjaxPaginationHelperFactory', mdtAjaxPaginationHelperFactory);
 }());
 
-(function(){
+(function () {
     'use strict';
 
     mdtLodashFactory.$inject = ['$window'];
-    function mdtLodashFactory($window){
-        if(!$window._){
+    function mdtLodashFactory($window) {
+        if (!$window._) {
             throw Error('Lodash does not found. Please make sure you load Lodash before any source for mdDataTable');
         }
 
@@ -589,35 +589,35 @@
         .module('mdDataTable')
         .factory('_', mdtLodashFactory);
 }());
-(function(){
+(function () {
     'use strict';
 
     mdtPaginationHelperFactory.$inject = ['PaginatorTypeProvider', '_'];
-    function mdtPaginationHelperFactory(PaginatorTypeProvider, _){
+    function mdtPaginationHelperFactory(PaginatorTypeProvider, _) {
 
-        function mdtPaginationHelper(dataStorage, paginationSetting){
+        function mdtPaginationHelper(dataStorage, paginationSetting) {
             this.paginatorType = PaginatorTypeProvider.ARRAY;
 
             this.dataStorage = dataStorage;
 
-            if(paginationSetting &&
+            if (paginationSetting &&
                 paginationSetting.hasOwnProperty('rowsPerPageValues') &&
-                paginationSetting.rowsPerPageValues.length > 0){
+                paginationSetting.rowsPerPageValues.length > 0) {
 
                 this.rowsPerPageValues = paginationSetting.rowsPerPageValues;
-            }else{
-                this.rowsPerPageValues = [10,20,30,50,100];
+            } else {
+                this.rowsPerPageValues = [10, 20, 30, 50, 100];
             }
 
             this.rowsPerPage = this.rowsPerPageValues[0];
             this.page = 1;
         }
 
-        mdtPaginationHelper.prototype.calculateVisibleRows = function (){
+        mdtPaginationHelper.prototype.calculateVisibleRows = function () {
             var that = this;
 
             _.each(this.dataStorage.storage, function (rowData, index) {
-                if(index >= that.getStartRowIndex() && index <= that.getEndRowIndex()) {
+                if (index >= that.getStartRowIndex() && index <= that.getEndRowIndex()) {
                     rowData.optionList.visible = true;
                 } else {
                     rowData.optionList.visible = false;
@@ -625,59 +625,59 @@
             });
         };
 
-        mdtPaginationHelper.prototype.getStartRowIndex = function(){
-            return (this.page-1) * this.rowsPerPage;
+        mdtPaginationHelper.prototype.getStartRowIndex = function () {
+            return (this.page - 1) * this.rowsPerPage;
         };
 
-        mdtPaginationHelper.prototype.getEndRowIndex = function(){
-            var lastItem = this.getStartRowIndex() + this.rowsPerPage-1;
+        mdtPaginationHelper.prototype.getEndRowIndex = function () {
+            var lastItem = this.getStartRowIndex() + this.rowsPerPage - 1;
 
-            if(this.dataStorage.storage.length < lastItem){
+            if (this.dataStorage.storage.length < lastItem) {
                 return this.dataStorage.storage.length - 1;
             }
 
             return lastItem;
         };
 
-        mdtPaginationHelper.prototype.getTotalRowsCount = function(){
+        mdtPaginationHelper.prototype.getTotalRowsCount = function () {
             return this.dataStorage.storage.length;
         };
 
-        mdtPaginationHelper.prototype.getRows = function(){
+        mdtPaginationHelper.prototype.getRows = function () {
             this.calculateVisibleRows();
 
             return this.dataStorage.storage;
         };
 
-        mdtPaginationHelper.prototype.previousPage = function(){
-            if(this.hasPreviousPage()){
+        mdtPaginationHelper.prototype.previousPage = function () {
+            if (this.hasPreviousPage()) {
                 this.page--;
             }
         };
 
-        mdtPaginationHelper.prototype.nextPage = function(){
-            if(this.hasNextPage()){
+        mdtPaginationHelper.prototype.nextPage = function () {
+            if (this.hasNextPage()) {
                 this.page++;
             }
         };
 
-        mdtPaginationHelper.prototype.hasNextPage = function(){
+        mdtPaginationHelper.prototype.hasNextPage = function () {
             var totalPages = Math.ceil(this.getTotalRowsCount() / this.rowsPerPage);
 
             return this.page < totalPages;
         };
 
-        mdtPaginationHelper.prototype.hasPreviousPage = function(){
+        mdtPaginationHelper.prototype.hasPreviousPage = function () {
             return this.page > 1;
         };
 
-        mdtPaginationHelper.prototype.setRowsPerPage = function(rowsPerPage){
+        mdtPaginationHelper.prototype.setRowsPerPage = function (rowsPerPage) {
             this.rowsPerPage = rowsPerPage;
             this.page = 1;
         };
 
         return {
-            getInstance: function(dataStorage, isEnabled){
+            getInstance: function (dataStorage, isEnabled) {
                 return new mdtPaginationHelper(dataStorage, isEnabled);
             }
         };
@@ -687,24 +687,24 @@
         .module('mdDataTable')
         .service('mdtPaginationHelperFactory', mdtPaginationHelperFactory);
 }());
-(function(){
+(function () {
     'use strict';
 
     TableDataStorageFactory.$inject = ['$log', '_'];
-    function TableDataStorageFactory($log, _){
+    function TableDataStorageFactory($log, _) {
 
-        function TableDataStorageService(){
+        function TableDataStorageService() {
             this.storage = [];
             this.header = [];
             this.customCells = {};
         }
 
-        TableDataStorageService.prototype.addHeaderCellData = function(ops){
+        TableDataStorageService.prototype.addHeaderCellData = function (ops) {
             this.header.push(ops);
         };
 
-        TableDataStorageService.prototype.addRowData = function(explicitRowId, rowArray, className){
-            if(!(rowArray instanceof Array)){
+        TableDataStorageService.prototype.addRowData = function (explicitRowId, rowArray, className) {
+            if (!(rowArray instanceof Array)) {
                 $log.error('`rowArray` parameter should be array');
                 return;
             }
@@ -721,66 +721,66 @@
             });
         };
 
-        TableDataStorageService.prototype.getRowData = function(index){
-            if(!this.storage[index]){
-                $log.error('row is not exists at index: '+index);
+        TableDataStorageService.prototype.getRowData = function (index) {
+            if (!this.storage[index]) {
+                $log.error('row is not exists at index: ' + index);
                 return;
             }
 
             return this.storage[index].data;
         };
 
-        TableDataStorageService.prototype.getRowOptions = function(index){
-            if(!this.storage[index]){
-                $log.error('row is not exists at index: '+index);
+        TableDataStorageService.prototype.getRowOptions = function (index) {
+            if (!this.storage[index]) {
+                $log.error('row is not exists at index: ' + index);
                 return;
             }
 
             return this.storage[index].optionList;
         };
 
-        TableDataStorageService.prototype.setAllRowsSelected = function(isSelected, isPaginationEnabled){
-            if(typeof isSelected === 'undefined'){
+        TableDataStorageService.prototype.setAllRowsSelected = function (isSelected, isPaginationEnabled) {
+            if (typeof isSelected === 'undefined') {
                 $log.error('`isSelected` parameter is required');
                 return;
             }
 
-            _.each(this.storage, function(rowData){
-                if(isPaginationEnabled) {
+            _.each(this.storage, function (rowData) {
+                if (isPaginationEnabled) {
                     if (rowData.optionList.visible) {
                         rowData.optionList.selected = isSelected ? true : false;
                     }
-                }else{
+                } else {
                     rowData.optionList.selected = isSelected ? true : false;
                 }
             });
         };
 
-        TableDataStorageService.prototype.isAnyRowSelected = function(){
-            return _.some(this.storage, function(rowData){
+        TableDataStorageService.prototype.isAnyRowSelected = function () {
+            return _.some(this.storage, function (rowData) {
                 return rowData.optionList.selected === true && rowData.optionList.deleted === false;
             });
         };
 
-        TableDataStorageService.prototype.getNumberOfSelectedRows = function(){
-            var res = _.countBy(this.storage, function(rowData){
+        TableDataStorageService.prototype.getNumberOfSelectedRows = function () {
+            var res = _.countBy(this.storage, function (rowData) {
                 return rowData.optionList.selected === true && rowData.optionList.deleted === false ? 'selected' : 'unselected';
             });
 
             return res.selected ? res.selected : 0;
         };
 
-        TableDataStorageService.prototype.deleteSelectedRows = function(){
+        TableDataStorageService.prototype.deleteSelectedRows = function () {
             var deletedRows = [];
 
-            _.each(this.storage, function(rowData){
-                if(rowData.optionList.selected && rowData.optionList.deleted === false){
+            _.each(this.storage, function (rowData) {
+                if (rowData.optionList.selected && rowData.optionList.deleted === false) {
 
-                    if(rowData.rowId){
+                    if (rowData.rowId) {
                         deletedRows.push(rowData.rowId);
 
                         //Fallback when no id was specified
-                    } else{
+                    } else {
                         deletedRows.push(rowData.data);
                     }
 
@@ -791,17 +791,17 @@
             return deletedRows;
         };
 
-        TableDataStorageService.prototype.getSelectedRows = function(){
+        TableDataStorageService.prototype.getSelectedRows = function () {
             var selectedRows = [];
 
-            _.each(this.storage, function(rowData){
-                if(rowData.optionList.selected && rowData.optionList.deleted === false){
+            _.each(this.storage, function (rowData) {
+                if (rowData.optionList.selected && rowData.optionList.deleted === false) {
 
-                    if(rowData.rowId){
+                    if (rowData.rowId) {
                         selectedRows.push(rowData.rowId);
 
                         //Fallback when no id was specified
-                    } else{
+                    } else {
                         selectedRows.push(rowData.data);
                     }
                 }
@@ -810,10 +810,10 @@
             return selectedRows;
         };
 
-        TableDataStorageService.prototype.getSavedRowData = function(rowData){
+        TableDataStorageService.prototype.getSavedRowData = function (rowData) {
             var rawRowData = [];
 
-            _.each(rowData.data, function(aCell){
+            _.each(rowData.data, function (aCell) {
                 rawRowData.push(aCell.value);
             });
 
@@ -821,7 +821,7 @@
         };
 
         return {
-            getInstance: function(){
+            getInstance: function () {
                 return new TableDataStorageService();
             }
         };
@@ -831,21 +831,21 @@
         .module('mdDataTable')
         .factory('TableDataStorageFactory', TableDataStorageFactory);
 }());
-(function(){
+(function () {
     'use strict';
 
     PaginationFeature.$inject = ['mdtPaginationHelperFactory', 'mdtAjaxPaginationHelperFactory'];
-    function PaginationFeature(mdtPaginationHelperFactory, mdtAjaxPaginationHelperFactory){
+    function PaginationFeature(mdtPaginationHelperFactory, mdtAjaxPaginationHelperFactory) {
         var service = this;
 
         service.initFeature = initFeature;
         service.startFeature = startFeature;
 
-        function initFeature(scope, ctrl){
-            if(!scope.mdtRowPaginator){
+        function initFeature(scope, ctrl) {
+            if (!scope.mdtRowPaginator) {
                 ctrl.mdtPaginationHelper = scope.mdtPaginationHelper = mdtPaginationHelperFactory
                     .getInstance(ctrl.dataStorage, scope.paginatedRows, scope.mdtRow);
-            }else{
+            } else {
                 ctrl.mdtPaginationHelper = scope.mdtPaginationHelper = mdtAjaxPaginationHelperFactory.getInstance({
                     dataStorage: ctrl.dataStorage,
                     paginationSetting: scope.paginatedRows,
@@ -857,9 +857,9 @@
                 });
             }
 
-            scope.isPaginationEnabled = function(){
-                if(scope.paginatedRows === true ||
-                    (scope.paginatedRows && scope.paginatedRows.hasOwnProperty('isEnabled') && scope.paginatedRows.isEnabled === true)){
+            scope.isPaginationEnabled = function () {
+                if (scope.paginatedRows === true ||
+                    (scope.paginatedRows && scope.paginatedRows.hasOwnProperty('isEnabled') && scope.paginatedRows.isEnabled === true)) {
                     return true;
                 }
 
@@ -867,7 +867,7 @@
             };
 
             ctrl.paginationFeature = {
-                startPaginationFeature: function() {
+                startPaginationFeature: function () {
                     if (scope.mdtRowPaginator) {
                         scope.mdtPaginationHelper.fetchPage(1);
                     }
@@ -875,7 +875,7 @@
             };
         }
 
-        function startFeature(ctrl){
+        function startFeature(ctrl) {
             ctrl.paginationFeature.startPaginationFeature();
         }
     }
@@ -884,32 +884,32 @@
         .module('mdDataTable')
         .service('PaginationFeature', PaginationFeature);
 }());
-(function(){
+(function () {
     'use strict';
 
     SelectableRowsFeatureFactory.$inject = ['$timeout'];
-    function SelectableRowsFeatureFactory($timeout){
+    function SelectableRowsFeatureFactory($timeout) {
 
-        function SelectableRowsFeature(params){
+        function SelectableRowsFeature(params) {
             this.$scope = params.$scope;
             this.ctrl = params.ctrl;
 
             this.$scope.onCheckboxChange = _.bind(this.onCheckboxChange, this);
         }
 
-        SelectableRowsFeature.prototype.onCheckboxChange = function(){
+        SelectableRowsFeature.prototype.onCheckboxChange = function () {
             var that = this;
             // we need to push it to the event loop to make it happen last
             // (e.g.: all the elements can be selected before we call the callback)
-            $timeout(function(){
+            $timeout(function () {
                 that.$scope.selectedRowCallback({
                     rows: that.ctrl.dataStorage.getSelectedRows()
                 });
-            },0);
+            }, 0);
         };
 
         return {
-            getInstance: function(params){
+            getInstance: function (params) {
                 return new SelectableRowsFeature(params);
             }
         };
@@ -919,11 +919,11 @@
         .module('mdDataTable')
         .service('SelectableRowsFeature', SelectableRowsFeatureFactory);
 }());
-(function(){
+(function () {
     'use strict';
 
     ColumnAlignmentHelper.$inject = ['ColumnOptionProvider'];
-    function ColumnAlignmentHelper(ColumnOptionProvider){
+    function ColumnAlignmentHelper(ColumnOptionProvider) {
         var service = this;
         service.getColumnAlignClass = getColumnAlignClass;
 
@@ -940,7 +940,7 @@
         .module('mdDataTable')
         .service('ColumnAlignmentHelper', ColumnAlignmentHelper);
 }());
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -950,7 +950,7 @@
      * @describe Representing the assignable properties to the columns you can give.
      */
     var ColumnOptionProvider = {
-        ALIGN_RULE : {
+        ALIGN_RULE: {
             ALIGN_LEFT: 'left',
             ALIGN_RIGHT: 'right'
         }
@@ -961,7 +961,7 @@
         .value('ColumnOptionProvider', ColumnOptionProvider);
 })();
 
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -971,8 +971,8 @@
      * @describe Representing the possible paginator types.
      */
     var PaginatorTypeProvider = {
-        AJAX : 'ajax',
-        ARRAY : 'array'
+        AJAX: 'ajax',
+        ARRAY: 'array'
     };
 
     angular
@@ -980,7 +980,7 @@
         .value('PaginatorTypeProvider', PaginatorTypeProvider);
 })();
 
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -1025,13 +1025,13 @@
      * </pre>
      */
     mdtCellDirective.$inject = ['$interpolate'];
-    function mdtCellDirective($interpolate){
+    function mdtCellDirective($interpolate) {
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
             require: '^mdtRow',
-            link: function($scope, element, attr, mdtRowCtrl, transclude){
+            link: function ($scope, element, attr, mdtRowCtrl, transclude) {
 
                 var attributes = {
                     htmlContent: attr.htmlContent ? attr.htmlContent : false,
@@ -1042,9 +1042,9 @@
 
                 transclude(function (clone) {
 
-                    if(attr.htmlContent){
+                    if (attr.htmlContent) {
                         mdtRowCtrl.addToRowDataStorage(clone, attributes);
-                    }else{
+                    } else {
                         //TODO: better idea?
                         console.log(clone);
                         var cellValue = $interpolate(clone.context.data)($scope.$parent);
@@ -1060,7 +1060,7 @@
         .module('mdDataTable')
         .directive('mdtCell', mdtCellDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -1098,7 +1098,7 @@
      *  </mdt-table>
      * </pre>
      */
-    function mdtRowDirective(){
+    function mdtRowDirective() {
         return {
             restrict: 'E',
             transclude: true,
@@ -1106,22 +1106,22 @@
             scope: {
                 tableRowId: '='
             },
-            controller: ['$scope', function($scope){
+            controller: ['$scope', function ($scope) {
                 var vm = this;
 
                 vm.addToRowDataStorage = addToRowDataStorage;
                 $scope.rowDataStorage = [];
 
-                function addToRowDataStorage(value, attributes){
+                function addToRowDataStorage(value, attributes) {
                     $scope.rowDataStorage.push({value: value, attributes: attributes});
                 }
             }],
-            link: function($scope, element, attrs, ctrl, transclude){
+            link: function ($scope, element, attrs, ctrl, transclude) {
                 appendColumns();
 
                 ctrl.dataStorage.addRowData($scope.tableRowId, $scope.rowDataStorage);
 
-                function appendColumns(){
+                function appendColumns() {
                     transclude(function (clone) {
                         element.append(clone);
                     });
@@ -1134,7 +1134,7 @@
         .module('mdDataTable')
         .directive('mdtRow', mdtRowDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -1195,7 +1195,7 @@
      * </pre>
      */
     mdtColumnDirective.$inject = ['$interpolate', 'ColumnFilterFeature', 'ColumnSortFeature', 'ColumnSelectorFeature'];
-    function mdtColumnDirective($interpolate, ColumnFilterFeature, ColumnSortFeature, ColumnSelectorFeature){
+    function mdtColumnDirective($interpolate, ColumnFilterFeature, ColumnSortFeature, ColumnSelectorFeature) {
         return {
             restrict: 'E',
             transclude: true,
@@ -1235,21 +1235,21 @@
         .module('mdDataTable')
         .directive('mdtColumn', mdtColumnDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     mdtGeneratedHeaderCellContentDirective.$inject = ['ColumnFilterFeature', 'ColumnSortFeature'];
-    function mdtGeneratedHeaderCellContentDirective(ColumnFilterFeature, ColumnSortFeature){
+    function mdtGeneratedHeaderCellContentDirective(ColumnFilterFeature, ColumnSortFeature) {
         return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtGeneratedHeaderCellContent.html',
             replace: true,
             scope: false,
             require: '^mdtTable',
-            link: function($scope, element, attrs, ctrl){
+            link: function ($scope, element, attrs, ctrl) {
                 ColumnFilterFeature.initGeneratedHeaderCellContent($scope, $scope.headerRowData, ctrl.mdtPaginationHelper, ctrl.dataStorage);
 
-                $scope.columnClickHandler = function(){
+                $scope.columnClickHandler = function () {
                     ColumnFilterFeature.generatedHeaderCellClickHandler($scope, $scope.headerRowData, element);
                     ColumnSortFeature.columnClickHandler($scope.headerRowData, ctrl.dataStorage, ctrl.mdtPaginationHelper, attrs.index);
                 };
@@ -1262,10 +1262,10 @@
         .directive('mdtGeneratedHeaderCellContent', mdtGeneratedHeaderCellContentDirective);
 }());
 
-(function(){
+(function () {
     'use strict';
 
-    function mdtGeneratedHeaderRowDirective(){
+    function mdtGeneratedHeaderRowDirective() {
         return {
             restrict: 'A',
             templateUrl: '/main/templates/mdtGeneratedHeaderRow.html'
@@ -1276,7 +1276,7 @@
         .module('mdDataTable')
         .directive('mdtGeneratedHeaderRow', mdtGeneratedHeaderRowDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -1290,17 +1290,17 @@
      * The main responsibility of this directive is to execute all the transcluded `mdt-column` element directives.
      *
      */
-    function mdtHeaderRowDirective(){
+    function mdtHeaderRowDirective() {
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
             require: '^mdtTable',
             scope: true,
-            link: function($scope, element, attrs, mdtCtrl, transclude){
+            link: function ($scope, element, attrs, mdtCtrl, transclude) {
                 appendColumns();
 
-                function appendColumns(){
+                function appendColumns() {
                     transclude(function (clone) {
                         element.append(clone);
                     });
@@ -1313,17 +1313,17 @@
         .module('mdDataTable')
         .directive('mdtHeaderRow', mdtHeaderRowDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     mdtAddAlignClass.$inject = ['ColumnAlignmentHelper'];
-    function mdtAddAlignClass(ColumnAlignmentHelper){
+    function mdtAddAlignClass(ColumnAlignmentHelper) {
         return {
             restrict: 'A',
             scope: {
                 mdtAddAlignClass: '='
             },
-            link: function($scope, element){
+            link: function ($scope, element) {
                 var classToAdd = ColumnAlignmentHelper.getColumnAlignClass($scope.mdtAddAlignClass);
 
                 element.addClass(classToAdd);
@@ -1335,32 +1335,32 @@
         .module('mdDataTable')
         .directive('mdtAddAlignClass', mdtAddAlignClass);
 }());
-(function(){
+(function () {
     'use strict';
 
     mdtAddHtmlContentToCellDirective.$inject = ['$parse', '$compile', '$rootScope'];
-    function mdtAddHtmlContentToCellDirective($parse, $compile, $rootScope){
+    function mdtAddHtmlContentToCellDirective($parse, $compile, $rootScope) {
         return {
             restrict: 'A',
             require: '^?mdtTable',
-            link: function($scope, element, attr, ctrl){
+            link: function ($scope, element, attr, ctrl) {
 
                 //for performance reasons we keep the parsedValue over here, since we need to reuse it twice.
                 var parsedValue;
 
-                $scope.$watch(function(){
+                $scope.$watch(function () {
                     //this needs to be like that. Passing only `attr.mdtAddHtmlContentToCell` will cause digest to go crazy 10 times.
                     // so we has to say explicitly that we only want to watch the content and nor the attributes, or the additional metadata.
                     parsedValue = $parse(attr.mdtAddHtmlContentToCell)($scope);
 
                     return parsedValue.value;
 
-                }, function(val){
+                }, function (val) {
                     element.empty();
 
                     // ctrl doesn't exist on the first row, making html content impossible to show up.
                     // TODO: make it as a global service .... I know but any better idea?
-                    if(parsedValue.columnKey && ctrl && ctrl.dataStorage.customCells[parsedValue.columnKey]){
+                    if (parsedValue.columnKey && ctrl && ctrl.dataStorage.customCells[parsedValue.columnKey]) {
                         var customCellData = ctrl.dataStorage.customCells[parsedValue.columnKey];
 
                         var clonedHtml = customCellData.htmlContent;
@@ -1368,18 +1368,18 @@
                         //append value to the scope
                         var localScope = $rootScope.$new();
 
-                        if(parsedValue.rowId){
+                        if (parsedValue.rowId) {
                             localScope.rowId = parsedValue.rowId;
                         }
 
                         localScope.clientScope = customCellData.scope;
                         localScope.value = val;
 
-                        $compile(clonedHtml)(localScope, function(cloned){
+                        $compile(clonedHtml)(localScope, function (cloned) {
                             element.append(cloned);
                         });
 
-                    }else{
+                    } else {
                         element.append(val);
                     }
 
@@ -1393,15 +1393,15 @@
         .module('mdDataTable')
         .directive('mdtAddHtmlContentToCell', mdtAddHtmlContentToCellDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
-    function mdtAnimateSortIconHandlerDirective(){
+    function mdtAnimateSortIconHandlerDirective() {
         return {
             restrict: 'A',
             scope: false,
-            link: function($scope, element){
-                if($scope.animateSortIcon){
+            link: function ($scope, element) {
+                if ($scope.animateSortIcon) {
                     element.addClass('animate-sort-icon');
                 }
             }
@@ -1412,17 +1412,17 @@
         .module('mdDataTable')
         .directive('mdtAnimateSortIconHandler', mdtAnimateSortIconHandlerDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
-    function mdtCustomCellDirective(){
+    function mdtCustomCellDirective() {
         return {
             restrict: 'E',
             transclude: true,
             template: '<span class="customCell" ng-transclude></span>',
             require: '^mdtTable',
             link: {
-                pre: function($scope, element, attrs, ctrl, transclude){
+                pre: function ($scope, element, attrs, ctrl, transclude) {
                     transclude(function (clone) {
                         var columnKey = attrs.columnKey;
 
@@ -1440,18 +1440,18 @@
         .module('mdDataTable')
         .directive('mdtCustomCell', mdtCustomCellDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
-    function mdtSelectAllRowsHandlerDirective(){
+    function mdtSelectAllRowsHandlerDirective() {
         return {
             restrict: 'A',
             scope: false,
             require: '^mdtTable',
-            link: function($scope, element, attrs, ctrl){
+            link: function ($scope, element, attrs, ctrl) {
                 $scope.selectAllRows = false;
 
-                $scope.$watch('selectAllRows', function(val){
+                $scope.$watch('selectAllRows', function (val) {
                     ctrl.dataStorage.setAllRowsSelected(val, $scope.isPaginationEnabled());
                 });
             }
@@ -1463,10 +1463,10 @@
         .directive('mdtSelectAllRowsHandler', mdtSelectAllRowsHandlerDirective);
 }());
 
-(function(){
+(function () {
     'use strict';
 
-    function mdtCardFooterDirective(){
+    function mdtCardFooterDirective() {
         return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtCardFooter.html',
@@ -1474,11 +1474,11 @@
             replace: true,
             scope: true,
             require: ['^mdtTable'],
-            link: function($scope){
+            link: function ($scope) {
                 $scope.rowsPerPage = $scope.mdtPaginationHelper.rowsPerPage;
 
-                $scope.$watch('rowsPerPage', function(newVal, oldVal){
-                    if(newVal !== oldVal){
+                $scope.$watch('rowsPerPage', function (newVal, oldVal) {
+                    if (newVal !== oldVal) {
                         $scope.mdtPaginationHelper.setRowsPerPage(newVal);
                     }
                 });
@@ -1491,10 +1491,10 @@
         .directive('mdtCardFooter', mdtCardFooterDirective);
 }());
 
-(function(){
+(function () {
     'use strict';
 
-    function mdtCardHeaderDirective(){
+    function mdtCardHeaderDirective() {
         return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtCardHeader.html',
@@ -1502,17 +1502,17 @@
             replace: true,
             scope: true,
             require: ['^mdtTable'],
-            link: function($scope){
+            link: function ($scope) {
                 $scope.isTableCardEnabled = false;
 
                 //TODO: move it to the feature file
-                $scope.handleColumnChooserButtonClick = function(){
-                    if($scope.columnSelectorFeature.isEnabled){
+                $scope.handleColumnChooserButtonClick = function () {
+                    if ($scope.columnSelectorFeature.isEnabled) {
                         $scope.columnSelectorFeature.isActive = !$scope.columnSelectorFeature.isActive
                     }
                 };
 
-                if($scope.tableCard && $scope.tableCard.visible !== false){
+                if ($scope.tableCard && $scope.tableCard.visible !== false) {
                     $scope.isTableCardEnabled = true;
                 }
             }
@@ -1523,11 +1523,11 @@
         .module('mdDataTable')
         .directive('mdtCardHeader', mdtCardHeaderDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     ColumnFilterFeature.$inject = ['ColumnSortFeature', 'PaginatorTypeProvider'];
-    function ColumnFilterFeature(ColumnSortFeature, PaginatorTypeProvider){
+    function ColumnFilterFeature(ColumnSortFeature, PaginatorTypeProvider) {
 
         var service = this;
 
@@ -1540,10 +1540,10 @@
          * @param $scope
          * @param cellDataToStore
          */
-        service.appendHeaderCellData = function($scope, cellDataToStore, dataStorage){
+        service.appendHeaderCellData = function ($scope, cellDataToStore, dataStorage) {
             cellDataToStore.columnFilter = {};
 
-            if($scope.columnFilter && $scope.columnFilter.valuesProviderCallback){
+            if ($scope.columnFilter && $scope.columnFilter.valuesProviderCallback) {
                 cellDataToStore.columnFilter.isEnabled = true;
                 cellDataToStore.columnFilter.filtersApplied = [];
                 cellDataToStore.columnFilter.valuesProviderCallback = $scope.columnFilter.valuesProviderCallback;
@@ -1553,10 +1553,10 @@
                 cellDataToStore.columnFilter.type = $scope.columnFilter.filterType || 'chips';
                 cellDataToStore.columnFilter.isActive = false;
 
-                cellDataToStore.columnFilter.setColumnActive = function(bool){
+                cellDataToStore.columnFilter.setColumnActive = function (bool) {
                     //first we disable every column filter if any is active
-                    _.each(dataStorage.header, function(headerData){
-                        if(headerData.columnFilter.isEnabled){
+                    _.each(dataStorage.header, function (headerData) {
+                        if (headerData.columnFilter.isEnabled) {
                             headerData.columnFilter.isActive = false;
                         }
                     });
@@ -1564,7 +1564,7 @@
                     //then we activate ours
                     cellDataToStore.columnFilter.isActive = bool ? true : false;
                 }
-            }else{
+            } else {
                 cellDataToStore.columnFilter.isEnabled = false;
             }
         };
@@ -1577,22 +1577,22 @@
          * @param headerData
          * @param paginator
          */
-        service.initGeneratedHeaderCellContent = function($scope, headerData, paginator, dataStorage){
-            if(!headerData.columnFilter.isEnabled){
+        service.initGeneratedHeaderCellContent = function ($scope, headerData, paginator, dataStorage) {
+            if (!headerData.columnFilter.isEnabled) {
                 return;
             }
 
             $scope.columnFilterFeature = {};
 
-            $scope.columnFilterFeature.cancelFilterDialog = function(event){
-                if(event){
+            $scope.columnFilterFeature.cancelFilterDialog = function (event) {
+                if (event) {
                     event.stopPropagation();
                 }
 
                 headerData.columnFilter.setColumnActive(false);
             };
 
-            $scope.columnFilterFeature.confirmFilterDialog = function(params){
+            $scope.columnFilterFeature.confirmFilterDialog = function (params) {
                 params.event.stopPropagation();
 
                 headerData.columnFilter.setColumnActive(false);
@@ -1602,9 +1602,9 @@
                 //applying changes to sort feature
                 ColumnSortFeature.setHeaderSort(headerData, params.sortingData, dataStorage);
 
-                if(paginator.paginatorType === PaginatorTypeProvider.AJAX){
+                if (paginator.paginatorType === PaginatorTypeProvider.AJAX) {
                     paginator.getFirstPage();
-                }else{
+                } else {
                     // no support for non-ajax yet
                 }
             }
@@ -1615,8 +1615,8 @@
          * @param $scope
          * @param headerRowData
          */
-        service.generatedHeaderCellClickHandler = function($scope, headerRowData, element){
-            if(!headerRowData.columnFilter.isEnabled) {
+        service.generatedHeaderCellClickHandler = function ($scope, headerRowData, element) {
+            if (!headerRowData.columnFilter.isEnabled) {
                 return;
             }
 
@@ -1628,29 +1628,29 @@
          * @param dataStorage
          * @param callbackArguments
          */
-        service.appendAppliedFiltersToCallbackArgument = function(dataStorage, callbackArguments){
+        service.appendAppliedFiltersToCallbackArgument = function (dataStorage, callbackArguments) {
             var columnFilters = [];
             var isEnabled = false;
 
-            _.each(dataStorage.header, function(headerData){
+            _.each(dataStorage.header, function (headerData) {
                 var filters = headerData.columnFilter.filtersApplied || [];
 
-                if(headerData.columnFilter.isEnabled){
+                if (headerData.columnFilter.isEnabled) {
                     isEnabled = true;
                 }
 
                 columnFilters.push(filters);
             });
 
-            if(isEnabled){
+            if (isEnabled) {
                 callbackArguments.options.columnFilter = columnFilters;
             }
         };
 
-        service.resetFiltersForColumn = function(dataStorage, index){
-            if(dataStorage.header[index].columnFilter
+        service.resetFiltersForColumn = function (dataStorage, index) {
+            if (dataStorage.header[index].columnFilter
                 && dataStorage.header[index].columnFilter.isEnabled
-                && dataStorage.header[index].columnFilter.filtersApplied.length){
+                && dataStorage.header[index].columnFilter.filtersApplied.length) {
 
                 dataStorage.header[index].columnFilter.filtersApplied = [];
 
@@ -1665,7 +1665,7 @@
          * of the component because otherwise some parts of the panel can became partially or fully hidden
          * (e.g.: when table has only one row to show)
          */
-        service.positionColumnFilterBox = function(element){
+        service.positionColumnFilterBox = function (element) {
             var elementPosition = element.closest('th').offset();
 
             var targetMetrics = {
@@ -1679,7 +1679,7 @@
             element.css({
                 top: targetMetrics.top + 'px',
                 left: targetMetrics.left + 'px',
-                position:'absolute'
+                position: 'absolute'
             });
         }
     }
@@ -1688,7 +1688,7 @@
         .module('mdDataTable')
         .service('ColumnFilterFeature', ColumnFilterFeature);
 }());
-(function(){
+(function () {
     'use strict';
 
     function ColumnSelectorFeature() {
@@ -1702,22 +1702,22 @@
          *
          * @param cellDataToStore
          */
-        service.appendHeaderCellData = function(cellDataToStore, columnSelectorFeature, isColumnExcludedFromColumnSelector, hideColumnByDefault) {
-            if(!columnSelectorFeature.isEnabled){
+        service.appendHeaderCellData = function (cellDataToStore, columnSelectorFeature, isColumnExcludedFromColumnSelector, hideColumnByDefault) {
+            if (!columnSelectorFeature.isEnabled) {
                 return;
             }
 
             cellDataToStore.columnSelectorFeature = {};
 
-            if(isColumnExcludedFromColumnSelector){
+            if (isColumnExcludedFromColumnSelector) {
                 cellDataToStore.columnSelectorFeature.isExcluded = true;
-            }else{
+            } else {
                 cellDataToStore.columnSelectorFeature.isExcluded = false;
             }
 
-            if(hideColumnByDefault){
+            if (hideColumnByDefault) {
                 cellDataToStore.columnSelectorFeature.isHidden = true;
-            }else{
+            } else {
                 cellDataToStore.columnSelectorFeature.isHidden = false;
             }
         };
@@ -1729,13 +1729,13 @@
          *
          * @param cellDataToStore
          */
-        service.initFeature = function(scope, vm) {
+        service.initFeature = function (scope, vm) {
             //TODO: backward compatible when there is only a string input
             scope.columnSelectorFeature = {};
 
-            if(scope.tableCard && scope.tableCard.columnSelector){
+            if (scope.tableCard && scope.tableCard.columnSelector) {
                 scope.columnSelectorFeature.isEnabled = true;
-            }else{
+            } else {
                 scope.columnSelectorFeature.isEnabled = false;
             }
 
@@ -1749,9 +1749,9 @@
          *
          * @param headerRowsData
          */
-        service.initFeatureHeaderValues = function(headerRowsData, columnSelectorFeature){
-            if(columnSelectorFeature && columnSelectorFeature.isEnabled){
-                _.each(headerRowsData, function(item){
+        service.initFeatureHeaderValues = function (headerRowsData, columnSelectorFeature) {
+            if (columnSelectorFeature && columnSelectorFeature.isEnabled) {
+                _.each(headerRowsData, function (item) {
                     item.columnSelectorFeature.isVisible = !item.columnSelectorFeature.isHidden;
                 });
             }
@@ -1762,7 +1762,7 @@
          * of the component because otherwise some parts of the panel can became partially or fully hidden
          * (e.g.: when table has only one row to show)
          */
-        service.positionElement = function(element){
+        service.positionElement = function (element) {
             var elementToPosition = element.parent().find('.mdt-column-chooser-button');
             var elementPosition = elementToPosition.offset();
             var rt = ($(window).width() - (elementPosition.left + elementToPosition.outerWidth()));
@@ -1778,7 +1778,7 @@
             element.css({
                 top: targetMetrics.top + 'px',
                 right: targetMetrics.right + 'px',
-                position:'absolute'
+                position: 'absolute'
             });
         }
     }
@@ -1787,7 +1787,7 @@
         .module('mdDataTable')
         .service('ColumnSelectorFeature', ColumnSelectorFeature);
 }());
-(function(){
+(function () {
     'use strict';
 
     ColumnSortFeature.$inject = ['ColumnSortDirectionProvider'];
@@ -1802,14 +1802,14 @@
          *
          * @param cellDataToStore
          */
-        service.appendHeaderCellData = function(cellDataToStore, columnSortOptions) {
+        service.appendHeaderCellData = function (cellDataToStore, columnSortOptions) {
             cellDataToStore.columnSort = {};
 
-            if(columnSortOptions){
+            if (columnSortOptions) {
                 cellDataToStore.columnSort.isEnabled = true;
                 cellDataToStore.columnSort.sort = false;
                 cellDataToStore.columnSort.comparator = columnSortOptions.comparator ? columnSortOptions.comparator : false;
-            }else{
+            } else {
                 cellDataToStore.columnSort.isEnabled = false;
             }
         };
@@ -1821,8 +1821,8 @@
          * @param valueToSet
          * @param dataStorage
          */
-        service.setHeaderSort = function(headerRowData, valueToSet, dataStorage){
-            if(!valueToSet){
+        service.setHeaderSort = function (headerRowData, valueToSet, dataStorage) {
+            if (!valueToSet) {
                 return;
             }
 
@@ -1840,14 +1840,14 @@
          * @param paginator
          * @param columnIndex
          */
-        service.columnClickHandler = function(headerRowData, dataStorage, paginator, columnIndex){
+        service.columnClickHandler = function (headerRowData, dataStorage, paginator, columnIndex) {
             // if feature is not set for the column
-            if(!headerRowData.columnSort.isEnabled){
+            if (!headerRowData.columnSort.isEnabled) {
                 return;
             }
 
             // if column filter feature is enabled, it must be disabled by clicking on the column, we handle ordering there
-            if(headerRowData.columnFilter.isEnabled){
+            if (headerRowData.columnFilter.isEnabled) {
                 return;
             }
 
@@ -1858,10 +1858,10 @@
             setNextSortingDirection(headerRowData);
 
             // if ajax paginator is the current paginator
-            if(paginator.getFirstPage){
+            if (paginator.getFirstPage) {
                 paginator.getFirstPage();
                 // or it's just a simple data paginator
-            }else{
+            } else {
                 //todo: making it nicer
                 //adding the column index information to the header cell data
                 headerRowData.columnSort.columnIndex = columnIndex;
@@ -1876,23 +1876,23 @@
          * @param dataStorage
          * @param callbackArguments
          */
-        service.appendSortedColumnToCallbackArgument = function(dataStorage, callbackArguments){
+        service.appendSortedColumnToCallbackArgument = function (dataStorage, callbackArguments) {
             var columnsSortInformation = [];
             var isEnabled = false;
 
-            _.each(dataStorage.header, function(headerData){
+            _.each(dataStorage.header, function (headerData) {
                 var sortValue = headerData.columnSort.sort ? headerData.columnSort.sort : false;
 
                 columnsSortInformation.push({
                     sort: sortValue
                 });
 
-                if(headerData.columnSort.isEnabled){
+                if (headerData.columnSort.isEnabled) {
                     isEnabled = true;
                 }
             });
 
-            if(isEnabled){
+            if (isEnabled) {
                 callbackArguments.options.columnSort = columnsSortInformation;
             }
         };
@@ -1902,55 +1902,55 @@
          * @param event
          * @param sortingData
          */
-        service.sortingCallback = function(event, sortingData){
+        service.sortingCallback = function (event, sortingData) {
             event.preventDefault();
 
-            if(sortingData.columnSort.sort == false){
+            if (sortingData.columnSort.sort == false) {
                 sortingData.columnSort.sort = ColumnSortDirectionProvider.ASC;
-            }else if(sortingData.columnSort.sort === ColumnSortDirectionProvider.ASC){
+            } else if (sortingData.columnSort.sort === ColumnSortDirectionProvider.ASC) {
                 sortingData.columnSort.sort = ColumnSortDirectionProvider.DESC;
-            }else{
+            } else {
                 sortingData.columnSort.sort = false;
             }
         };
 
-        function resetColumnDirections(headerRowData, dataStorage){
+        function resetColumnDirections(headerRowData, dataStorage) {
             var lastDirectionValue = headerRowData.columnSort.sort;
-            _.each(dataStorage.header, function(headerData){
+            _.each(dataStorage.header, function (headerData) {
                 headerData.columnSort.sort = false;
             });
 
             headerRowData.columnSort.sort = lastDirectionValue;
         }
 
-        function setNextSortingDirection(headerRowData){
-            if(headerRowData.columnSort.sort === false){
+        function setNextSortingDirection(headerRowData) {
+            if (headerRowData.columnSort.sort === false) {
                 headerRowData.columnSort.sort = ColumnSortDirectionProvider.ASC;
-            }else if(headerRowData.columnSort.sort === ColumnSortDirectionProvider.ASC){
+            } else if (headerRowData.columnSort.sort === ColumnSortDirectionProvider.ASC) {
                 headerRowData.columnSort.sort = ColumnSortDirectionProvider.DESC;
-            }else{
+            } else {
                 headerRowData.columnSort.sort = false;
             }
         }
 
-        function sortByColumn(headerRowData, dataStorage){
+        function sortByColumn(headerRowData, dataStorage) {
             var sortFunction;
             var index = headerRowData.columnSort.columnIndex;
 
             if (typeof headerRowData.columnSort.comparator === 'function') {
-                sortFunction = function(a, b) {
+                sortFunction = function (a, b) {
                     return headerRowData.columnSort.comparator(a.data[index].value, b.data[index].value);
                 };
             } else {
                 // basic comparator function on basic values
                 sortFunction = function (a, b) {
-                    if(typeof a.data[index].value === 'string' && typeof b.data[index].value === 'string'){
+                    if (typeof a.data[index].value === 'string' && typeof b.data[index].value === 'string') {
 
-                        if(a.data[index].value > b.data[index].value){
+                        if (a.data[index].value > b.data[index].value) {
                             return 1;
-                        }else if(a.data[index].value < b.data[index].value){
+                        } else if (a.data[index].value < b.data[index].value) {
                             return -1;
-                        }else{
+                        } else {
                             return 0;
                         }
                     }
@@ -1961,7 +1961,7 @@
 
             dataStorage.storage.sort(sortFunction);
 
-            if(headerRowData.columnSort.sort === ColumnSortDirectionProvider.DESC){
+            if (headerRowData.columnSort.sort === ColumnSortDirectionProvider.DESC) {
                 dataStorage.storage.reverse();
             }
         }
@@ -1971,24 +1971,24 @@
         .module('mdDataTable')
         .service('ColumnSortFeature', ColumnSortFeature);
 }());
-(function(){
+(function () {
     'use strict';
 
     EditCellFeature.$inject = ['$mdDialog'];
-    function EditCellFeature($mdDialog){
+    function EditCellFeature($mdDialog) {
 
         var service = this;
 
-        service.addRequiredFunctions = function($scope, ctrl){
+        service.addRequiredFunctions = function ($scope, ctrl) {
 
-            $scope.saveRow = function(rowData){
+            $scope.saveRow = function (rowData) {
                 var rawRowData = ctrl.dataStorage.getSavedRowData(rowData);
 
                 //Mujib: changed to return the whole row with rowId
                 $scope.saveRowCallback({row: rowData});
             };
 
-            $scope.showEditDialog = function(ev, cellData, rowData){
+            $scope.showEditDialog = function (ev, cellData, rowData) {
                 var rect = ev.currentTarget.closest('td').getBoundingClientRect();
                 var position = {
                     left: rect.center
@@ -2013,16 +2013,29 @@
 
                 //  console.log(rowData);
 
-                for(var i =0; i< rowData.data.length; i++){
-                    if(rowData.data[i].columnKey == 'NoticeDate'){
+                for (var i = 0; i < rowData.data.length; i++) {
+                    console.log(rowData.data);
+                    if (rowData.data[i].columnKey == 'NoticeDate') {
                         var temp = rowData;
-                        if(typeof temp.data[2].value == 'string') {
+
+                        if (typeof temp.data[2].value == 'string') {
                             temp.value = new Date(temp.data[2].value.replace(/['"]+/g, ''));
                         }
                         ops.templateUrl = '/main/templates/noticeEditDialog.html';
                         ops.locals.cellData = temp;
                         break;
-                    }else if(rowData.data[i].columnKey == 'meejo'){
+                    }
+                    else if (rowData.data[i].columnKey == 'imageFile') {
+                        var temp = rowData;
+
+                        if (typeof temp.data[2].value == 'string') {
+                            temp.value = new Date(temp.data[2].value.replace(/['"]+/g, ''));
+                        }
+                        ops.templateUrl = '/main/templates/newsEditDialog.html';
+                        ops.locals.cellData = temp;
+                        break;
+                    }
+                    else if (rowData.data[i].columnKey == 'meejo') {
                         // temp.data[2].value = new Date(temp.data[2].value.replace(/['"]+/g, ''));
                         ops.templateUrl = '/main/templates/newsEditDialog.html';
                     }
@@ -2035,7 +2048,7 @@
                 // }
 
                 var that = this;
-                $mdDialog.show(ops).then(function(cellValue){
+                $mdDialog.show(ops).then(function (cellValue) {
                     //     console.log(cellValue);
                     // cellData.value = cellValue;
                     that.saveRow(cellValue);
@@ -2048,12 +2061,12 @@
         .module('mdDataTable')
         .service('EditCellFeature', EditCellFeature);
 }());
-(function() {
+(function () {
     'use strict';
 
     mdtCheckboxColumnFilterDirective.$inject = ['_', 'ColumnFilterFeature', 'ColumnSortFeature', 'ColumnSortDirectionProvider'];
-    function mdtCheckboxColumnFilterDirective(_, ColumnFilterFeature, ColumnSortFeature, ColumnSortDirectionProvider){
-        return{
+    function mdtCheckboxColumnFilterDirective(_, ColumnFilterFeature, ColumnSortFeature, ColumnSortDirectionProvider) {
+        return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtCheckboxColumnFilter.html',
             scope: {
@@ -2061,7 +2074,7 @@
                 cancelCallback: '&',
                 headerRowData: '='
             },
-            link: function($scope, element){
+            link: function ($scope, element) {
                 ColumnFilterFeature.positionColumnFilterBox(element);
 
                 $scope.transformChip = transformChip;
@@ -2077,19 +2090,19 @@
                 $scope.sortingCallback = ColumnSortFeature.sortingCallback;
 
                 //destroying scope doesn't remove element, since it belongs to the body directly
-                $scope.$on('$destroy', function(){
+                $scope.$on('$destroy', function () {
                     element.remove();
                 });
 
                 //populating choosable values
-                $scope.headerRowData.columnFilter.valuesProviderCallback().then(function(values){
-                    if(values){
+                $scope.headerRowData.columnFilter.valuesProviderCallback().then(function (values) {
+                    if (values) {
                         $scope.selectableItems = values
                     }
                 });
 
                 $scope.exists = function (item) {
-                    var result = _.findIndex($scope.selectedItems, function(arrayItem){
+                    var result = _.findIndex($scope.selectedItems, function (arrayItem) {
                         return transformChip(arrayItem) === transformChip(item);
                     });
 
@@ -2097,7 +2110,7 @@
                 };
 
                 $scope.toggle = function (item) {
-                    var idx = _.findIndex($scope.selectedItems, function(arrayItem){
+                    var idx = _.findIndex($scope.selectedItems, function (arrayItem) {
                         return transformChip(arrayItem) === transformChip(item);
                     });
 
@@ -2109,20 +2122,20 @@
                     }
                 };
 
-                $scope.selectAll = function($event){
+                $scope.selectAll = function ($event) {
                     $event.preventDefault();
 
                     $scope.selectedItems = $scope.selectableItems.slice(0, $scope.selectableItems.length);
                 };
 
-                $scope.clearAll = function($event){
+                $scope.clearAll = function ($event) {
                     $event.preventDefault();
 
                     $scope.selectedItems = [];
                 };
 
                 function transformChip(chip) {
-                    if($scope.headerRowData.columnFilter.valuesTransformerCallback){
+                    if ($scope.headerRowData.columnFilter.valuesTransformerCallback) {
                         return $scope.headerRowData.columnFilter.valuesTransformerCallback(chip);
                     }
 
@@ -2136,12 +2149,12 @@
         .module('mdDataTable')
         .directive('mdtCheckboxColumnFilter', mdtCheckboxColumnFilterDirective);
 })();
-(function() {
+(function () {
     'use strict';
 
     mdtChipsColumnFilterDirective.$inject = ['_', '$timeout', 'ColumnFilterFeature', 'ColumnSortFeature'];
-    function mdtChipsColumnFilterDirective(_, $timeout, ColumnFilterFeature, ColumnSortFeature){
-        return{
+    function mdtChipsColumnFilterDirective(_, $timeout, ColumnFilterFeature, ColumnSortFeature) {
+        return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtChipsColumnFilter.html',
             scope: {
@@ -2149,7 +2162,7 @@
                 cancelCallback: '&',
                 headerRowData: '='
             },
-            link: function($scope, element){
+            link: function ($scope, element) {
                 ColumnFilterFeature.positionColumnFilterBox(element);
 
                 $scope.transformChip = transformChip;
@@ -2167,17 +2180,17 @@
                 $scope.sortingCallback = ColumnSortFeature.sortingCallback;
 
                 //destroying scope doesn't remove element, since it belongs to the body directly
-                $scope.$on('$destroy', function(){
+                $scope.$on('$destroy', function () {
                     element.remove();
                 });
 
                 //focus input immediately
-                $timeout(function(){
+                $timeout(function () {
                     element.find('input').focus();
-                },0);
+                }, 0);
 
                 function transformChip(chip) {
-                    if($scope.headerRowData.columnFilter.valuesTransformerCallback){
+                    if ($scope.headerRowData.columnFilter.valuesTransformerCallback) {
                         return $scope.headerRowData.columnFilter.valuesTransformerCallback(chip);
                     }
 
@@ -2191,12 +2204,12 @@
         .module('mdDataTable')
         .directive('mdtChipsColumnFilter', mdtChipsColumnFilterDirective);
 })();
-(function() {
+(function () {
     'use strict';
 
     mdtDropdownColumnFilterDirective.$inject = ['ColumnFilterFeature', 'ColumnSortFeature'];
-    function mdtDropdownColumnFilterDirective(ColumnFilterFeature, ColumnSortFeature){
-        return{
+    function mdtDropdownColumnFilterDirective(ColumnFilterFeature, ColumnSortFeature) {
+        return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtDropdownColumnFilter.html',
             scope: {
@@ -2204,7 +2217,7 @@
                 cancelCallback: '&',
                 headerRowData: '='
             },
-            link: function($scope, element){
+            link: function ($scope, element) {
                 ColumnFilterFeature.positionColumnFilterBox(element);
 
                 $scope.transformChip = transformChip;
@@ -2224,32 +2237,32 @@
                 $scope.sortingCallback = ColumnSortFeature.sortingCallback;
 
                 //destroying scope doesn't remove element, since it belongs to the body directly
-                $scope.$on('$destroy', function(){
+                $scope.$on('$destroy', function () {
                     element.remove();
                 });
 
                 //populating choosable values
-                $scope.headerRowData.columnFilter.valuesProviderCallback().then(function(values){
-                    if(values){
+                $scope.headerRowData.columnFilter.valuesProviderCallback().then(function (values) {
+                    if (values) {
                         $scope.selectableItems = values;
                     }
                 });
 
                 function transformChip(chip) {
-                    if($scope.headerRowData.columnFilter.valuesTransformerCallback){
+                    if ($scope.headerRowData.columnFilter.valuesTransformerCallback) {
                         return $scope.headerRowData.columnFilter.valuesTransformerCallback(chip);
                     }
 
                     return chip;
                 }
 
-                function selectedItem(){
-                    if(typeof $scope.oneSelectedItem !== 'undefined'){
-                        var result = _.find($scope.selectableItems, function(anItem){
+                function selectedItem() {
+                    if (typeof $scope.oneSelectedItem !== 'undefined') {
+                        var result = _.find($scope.selectableItems, function (anItem) {
                             return transformChip(anItem) === $scope.oneSelectedItem
                         });
 
-                        if(result){
+                        if (result) {
                             $scope.selectedItems = [result];
                         }
                     }
@@ -2262,19 +2275,19 @@
         .module('mdDataTable')
         .directive('mdtDropdownColumnFilter', mdtDropdownColumnFilterDirective);
 })();
-(function() {
+(function () {
     'use strict';
 
     mdtColumnSelectorDirective.$inject = ['ColumnSelectorFeature', 'ColumnFilterFeature', 'PaginatorTypeProvider'];
-    function mdtColumnSelectorDirective(ColumnSelectorFeature, ColumnFilterFeature, PaginatorTypeProvider){
-        return{
+    function mdtColumnSelectorDirective(ColumnSelectorFeature, ColumnFilterFeature, PaginatorTypeProvider) {
+        return {
             restrict: 'E',
             templateUrl: '/main/templates/mdtColumnSelector.html',
             scope: true,
-            link: function($scope, element){
+            link: function ($scope, element) {
                 ColumnSelectorFeature.positionElement(element);
 
-                $scope.headerRowsData = _.map($scope.dataStorage.header, function(item){
+                $scope.headerRowsData = _.map($scope.dataStorage.header, function (item) {
                     //excluded content should also be in, since we use the index of the array to apply the changes. Do not exclude them.
 
                     return {
@@ -2285,7 +2298,7 @@
                 });
 
                 //destroying scope doesn't remove element, since it belongs to the body directly
-                $scope.$on('$destroy', function(){
+                $scope.$on('$destroy', function () {
                     element.remove();
                 });
 
@@ -2297,11 +2310,11 @@
                     item.isVisible = !item.isVisible;
                 };
 
-                $scope.selectAll = function($event){
+                $scope.selectAll = function ($event) {
                     $event.preventDefault();
 
-                    _.each($scope.headerRowsData, function(item){
-                        if(item.isExcluded){
+                    _.each($scope.headerRowsData, function (item) {
+                        if (item.isExcluded) {
                             return;
                         }
 
@@ -2309,11 +2322,11 @@
                     });
                 };
 
-                $scope.clearAll = function($event){
+                $scope.clearAll = function ($event) {
                     $event.preventDefault();
 
-                    _.each($scope.headerRowsData, function(item){
-                        if(item.isExcluded){
+                    _.each($scope.headerRowsData, function (item) {
+                        if (item.isExcluded) {
                             return;
                         }
 
@@ -2321,9 +2334,9 @@
                     });
                 };
 
-                $scope.isAllSelected = function(){
-                    var result = _.find($scope.headerRowsData, function(item){
-                        if(item.isExcluded){
+                $scope.isAllSelected = function () {
+                    var result = _.find($scope.headerRowsData, function (item) {
+                        if (item.isExcluded) {
                             return false;
                         }
 
@@ -2333,9 +2346,9 @@
                     return result ? false : true;
                 };
 
-                $scope.isNothingSelected = function(){
-                    var result = _.find($scope.headerRowsData, function(item){
-                        if(item.isExcluded){
+                $scope.isNothingSelected = function () {
+                    var result = _.find($scope.headerRowsData, function (item) {
+                        if (item.isExcluded) {
                             return false;
                         }
 
@@ -2345,17 +2358,17 @@
                     return result ? false : true;
                 };
 
-                $scope.confirmCallback = function(params){
+                $scope.confirmCallback = function (params) {
                     var paginator = params.paginator;
                     var isAnyResetHappened = false;
 
-                    _.each($scope.dataStorage.header, function(item, index){
+                    _.each($scope.dataStorage.header, function (item, index) {
                         item.columnSelectorFeature.isVisible = $scope.headerRowsData[index].isVisible;
 
-                        if(!item.columnSelectorFeature.isVisible){
+                        if (!item.columnSelectorFeature.isVisible) {
                             var result = ColumnFilterFeature.resetFiltersForColumn($scope.dataStorage, index);
 
-                            if(result){
+                            if (result) {
                                 isAnyResetHappened = true;
                             }
                         }
@@ -2363,16 +2376,16 @@
 
                     $scope.columnSelectorFeature.isActive = false;
 
-                    if(isAnyResetHappened){
-                        if(paginator.paginatorType === PaginatorTypeProvider.AJAX){
+                    if (isAnyResetHappened) {
+                        if (paginator.paginatorType === PaginatorTypeProvider.AJAX) {
                             paginator.getFirstPage();
-                        }else{
+                        } else {
                             // no support for non-ajax yet
                         }
                     }
                 };
 
-                $scope.cancelCallback = function(){
+                $scope.cancelCallback = function () {
                     $scope.columnSelectorFeature.isActive = false;
                 };
             }
@@ -2383,11 +2396,11 @@
         .module('mdDataTable')
         .directive('mdtColumnSelector', mdtColumnSelectorDirective);
 })();
-(function(){
+(function () {
     'use strict';
 
     mdtSortingIconsDirective.$inject = ['ColumnSortDirectionProvider'];
-    function mdtSortingIconsDirective(ColumnSortDirectionProvider){
+    function mdtSortingIconsDirective(ColumnSortDirectionProvider) {
         return {
             restrict: 'E',
             templateUrl: '/main/templates/cells/generateSortingIcons.html',
@@ -2395,7 +2408,7 @@
                 data: '=',
                 size: '@'
             },
-            link: function($scope){
+            link: function ($scope) {
                 $scope.ColumnSortDirectionProvider = ColumnSortDirectionProvider;
             }
         };
@@ -2405,7 +2418,7 @@
         .module('mdDataTable')
         .directive('mdtSortingIcons', mdtSortingIconsDirective);
 }());
-(function(){
+(function () {
     'use strict';
 
     /**
@@ -2415,8 +2428,8 @@
      * @describe Representing the possible paginator types.
      */
     var ColumnSortDirectionProvider = {
-        ASC : 'asc',
-        DESC : 'desc'
+        ASC: 'asc',
+        DESC: 'desc'
     };
 
     angular
